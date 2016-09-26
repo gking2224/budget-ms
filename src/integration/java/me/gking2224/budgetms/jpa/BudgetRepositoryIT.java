@@ -32,8 +32,9 @@ public class BudgetRepositoryIT {
     @Test
     public void testSave() {
         String name = "budget1";
+        Long projectId = 1L;
         
-        Budget b = new Budget(name);
+        Budget b = new Budget(name, projectId);
         Budget saved = repository.save(b);
         assertNotNull(saved);
     }
@@ -42,9 +43,9 @@ public class BudgetRepositoryIT {
     @Sql
     public void testFindOne() {
         
-        Budget mm = repository.findOne(100L);
+        Budget b = repository.findOne(1L);
         
-        assertNotNull(mm);
-        assertEquals("Test Model", mm.getName());
+        assertNotNull(b);
+        assertEquals("Test Budget", b.getName());
     }
 }

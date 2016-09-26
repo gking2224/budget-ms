@@ -41,7 +41,7 @@ springBoot {
     executable = true
 }
 bootRun {
-    jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=5056,suspend=n']
+    jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=7001,suspend=y']
 }
 bootRepackage {
     mainClass = 'me.gking2224.budgetms.BudgetMicroServiceApplication'
@@ -157,6 +157,8 @@ dependencies {
 cobertura {
     coverageDirs << file("build/integration-classes")
 }
+
+println integrationTest.classpath
 /*
 applicationDefaultJvmArgs = [
     "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"

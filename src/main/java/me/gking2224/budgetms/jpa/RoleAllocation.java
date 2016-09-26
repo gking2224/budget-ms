@@ -2,9 +2,13 @@ package me.gking2224.budgetms.jpa;
 
 
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -18,6 +22,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -55,15 +60,14 @@ public class RoleAllocation implements Serializable {
     
     private Long resourceId;
     
-    private List<AllocationFte> ftes = new ArrayList<AllocationFte>();
+    private List<AllocationFte> ftes = emptyList();
     
     public RoleAllocation() {
         
     }
     
     @Id
-    @GeneratedValue(generator="increment")
-    @GenericGenerator(name="increment", strategy = "increment")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "role_allocation_id")
     @JsonProperty("_id")
     public Long getId() {
@@ -88,12 +92,12 @@ public class RoleAllocation implements Serializable {
         return rate;
     }
 
-    @Column
+    @Column(name = "location_id")
     public Long getLocationId() {
         return locationId;
     }
 
-    @Column
+    @Column(name = "resource_id")
     public Long getResourceId() {
         return resourceId;
     }
@@ -123,7 +127,7 @@ public class RoleAllocation implements Serializable {
     }
     
     public void setFtes(List<AllocationFte> ftes) {
-        this.ftes = ftes;
+        this.ftes = unmodifiableList(ftes);
     }
     
     @JsonIgnore
@@ -166,13 +170,15 @@ public class RoleAllocation implements Serializable {
     @Transient
     @JsonInclude
     public List<BigDecimal> getActuals() {
-        return getFtes().stream().filter(f -> AllocationFte.AllocationType.ACTUALS == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList());
+        return unmodifiableList(
+                getFtes().stream().filter(f -> AllocationFte.AllocationType.ACTUALS == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList()));
     }
     
     @Transient
     @JsonInclude
     public List<BigDecimal> getForecast() {
-        return getFtes().stream().filter(f -> AllocationFte.AllocationType.FORECAST == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList());
+        return unmodifiableList(
+                getFtes().stream().filter(f -> AllocationFte.AllocationType.FORECAST == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList()));
     }
     @Embeddable
     private static class AllocationFte {

@@ -3,9 +3,6 @@
 /.gradle/
 /.idea/
 /.settings/
-/gradle/
 /.classpath
 /.project
-/gradlew
-/gradlew.bat
 /secret.properties

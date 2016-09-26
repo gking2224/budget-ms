@@ -34,9 +34,9 @@ CREATE TABLE `role` (
     `role_id` BIGINT not null auto_increment primary key,
     `budget_id` BIGINT not null,
     `name` VARCHAR(20) not null,
-    `locationId` BIGINT,
+    `location_id` BIGINT,
     `rate` DECIMAL(6,2),
-    `comment` VARCHAR(20)
+    `comment` VARCHAR(200)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000000;
 
 ALTER TABLE `role`
@@ -49,7 +49,7 @@ ALTER TABLE `role`
 DROP TABLE IF EXISTS `role_fte`;
 CREATE TABLE `role_fte` (
     `role_id` BIGINT not null,
-    `month` TINYINT(1) not null,
+    `month` INTEGER not null,
     `fte` DECIMAL(6,2)
 ) ENGINE=InnoDB;
 
@@ -67,9 +67,9 @@ DROP TABLE IF EXISTS `role_allocation`;
 CREATE TABLE `role_allocation` (
     `role_allocation_id` BIGINT not null auto_increment primary key,
     `role_id` BIGINT not null,
-    `locationId` BIGINT not null,
-    `resourceId` BIGINT,
-    `comment` VARCHAR(200) not null,
+    `location_id` BIGINT not null,
+    `resource_id` BIGINT,
+    `comment` VARCHAR(200),
     `rate` DECIMAL(6,2)
 ) ENGINE=InnoDB;
 
@@ -82,8 +82,8 @@ ALTER TABLE `role_allocation`
 DROP TABLE IF EXISTS `role_allocation_fte`;
 CREATE TABLE `role_allocation_fte` (
     `role_allocation_id` BIGINT not null,
-    `type` char(1) not null,
-    `month` TINYINT(1) not null,
+    `type` VARCHAR(8) not null,
+    `month` INTEGER not null,
     `fte` DECIMAL(6,2)
 ) ENGINE=InnoDB;
 

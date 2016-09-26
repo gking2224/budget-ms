@@ -1,7 +1,12 @@
 package me.gking2224.budgetms.jpa;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableList;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +17,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,10 +26,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
@@ -47,17 +50,16 @@ public class Role implements Serializable {
     
     private Long locationId;
     
-    private List<BigDecimal> ftes;
+    private List<BigDecimal> ftes = emptyList();
     
-    private Set<RoleAllocation> allocations;
+    private Set<RoleAllocation> allocations = emptySet();
     
     public Role() {
         
     }
     
     @Id
-    @GeneratedValue(generator="increment")
-    @GenericGenerator(name="increment", strategy = "increment")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "role_id")
     @JsonProperty("_id")
     public Long getId() {
@@ -95,7 +97,7 @@ public class Role implements Serializable {
         return rate;
     }
 
-    @Column
+    @Column(name="location_id")
     public Long getLocationId() {
         return locationId;
     }
@@ -172,7 +174,7 @@ public class Role implements Serializable {
     }
     
     public void setFtes(List<BigDecimal> ftes) {
-        this.ftes = ftes;
+        this.ftes = unmodifiableList(ftes);
     }
     
     @Column(name="fte") // needed?
@@ -193,7 +195,7 @@ public class Role implements Serializable {
                 ra.setRole(this);
             });
         }
-        this.allocations = allocations;
+        this.allocations = Collections.unmodifiableSet(allocations);
     }
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity=RoleAllocation.class, fetch=FetchType.LAZY)

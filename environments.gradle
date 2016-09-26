@@ -22,7 +22,7 @@ environments {
         }
         webapp {
             contextPath="/budgets"
-            httpPort=8000
+            httpPort=7000
             ng {
                 buildDir = "dist"
                 port = 3000
@@ -100,7 +100,7 @@ environments {
                 port = 3000
                 deleteIndexHtml=true
             }
-            httpPort=18000
+            httpPort=7060
         }
         springProfilesDefault = "dev"
     }

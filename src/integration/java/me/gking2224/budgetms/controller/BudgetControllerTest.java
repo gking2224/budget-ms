@@ -1,13 +1,19 @@
 package me.gking2224.budgetms.controller;
 
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static me.gking2224.budgetms.controller.BudgetController.BUDGETS;
 import static me.gking2224.common.utils.JsonMvcTestHelper.doGet;
 import static me.gking2224.common.utils.JsonMvcTestHelper.doPost;
+import static me.gking2224.common.utils.JsonMvcTestHelper.doPut;
 import static me.gking2224.common.utils.JsonMvcTestHelper.responseContent;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasToString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,19 +56,44 @@ public class BudgetControllerTest {
     }
 
     @Test
-    public void testGetBudgets() throws Exception {
-        ResultActions result = doGet(this.mockMvc, BUDGETS, JsonMvcTestHelper::expectOK);
-        result
+    public void testGetAllBudgets() throws Exception {
+        doGet(this.mockMvc, BUDGETS, JsonMvcTestHelper::expectOK)
+            .andDo(JsonMvcTestHelper::responseContent)
             .andExpect(jsonPath("$.length()").value(greaterThan(0)))
-            .andDo((m)->assertEquals("/budgets/100", json.getFilterValue(responseContent(m), "$.[?(@.name=='Model Type')].location")));
+            .andDo((m)->assertEquals("/budgets/1", json.getFilterValue(responseContent(m), "$.[?(@._id == '1')].location")));
     }
 
     @Test
     public void testNewBudget() throws Exception {
-        Budget mt = new Budget(100L, "Budget");
-        ResultActions result = doPost(this.mockMvc, mt, BUDGETS, JsonMvcTestHelper::expectOK);
+        long projectId = 1L;
+        Budget b = new Budget("Budget", projectId);
+        ResultActions result = doPost(this.mockMvc, b, BUDGETS, JsonMvcTestHelper::expectOK);
         result
-            .andExpect(jsonPath("$.id").isNotEmpty())
+            .andExpect(jsonPath("$._id").isNotEmpty())
+            .andExpect(jsonPath("$.projectId").value(hasToString(valueOf(projectId))))
+            .andExpect(jsonPath("$.location").isNotEmpty());
+    }
+
+    @Test
+    public void testGetSingleBudget() throws Exception {
+        long id = 1L;
+        String address = format("%s/%s", BUDGETS, id);
+        ResultActions result = doGet(this.mockMvc, address, JsonMvcTestHelper::expectOK);
+        result
+            .andExpect(jsonPath("$._id").value(hasToString(valueOf(id))))
+            .andExpect(jsonPath("$.location").value(equalTo(address)));
+    }
+
+    @Test
+    public void testUpdateBudget() throws Exception {
+        String newName = "Budget.x";
+        long projectId = 1L;
+        long id = 1L;
+        Budget b = new Budget(newName, projectId);
+        
+        doPut(this.mockMvc, b, format("%s/%s", BUDGETS, id), JsonMvcTestHelper::expectOK)
+            .andExpect(jsonPath("$._id").value(hasToString(valueOf(id))))
+            .andExpect(jsonPath("$.name").value(equalTo(newName)))
             .andExpect(jsonPath("$.location").isNotEmpty());
     }
 }

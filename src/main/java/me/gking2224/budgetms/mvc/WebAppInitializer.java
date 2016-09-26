@@ -5,7 +5,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import me.gking2224.common.web.WebAppConfigurer;
 
 public class WebAppInitializer
 //extends AbstractAnnotationConfigDispatcherServletInitializer {
