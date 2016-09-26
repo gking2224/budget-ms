@@ -3,22 +3,21 @@ package me.gking2224.budgetms.mvc;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
-@ComponentScan({"me.gking2224.budgetms", "me.gking2224.common"})
+//@ComponentScan({"me.gking2224.budgetms", "me.gking2224.common"})
 @ImportResource("classpath:test-budgetms-webapp-config.xml")
-@Configuration
-@EnableWebMvc
+//@Configuration
+//@EnableWebMvc
+@Component
 public class WebAppTestConfigurer extends WebMvcConfigurerAdapter {
 
 //    @Autowired

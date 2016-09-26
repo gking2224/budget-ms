@@ -16,13 +16,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -32,15 +34,26 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.util.UrlPathHelper;
 
 @Configuration
-@ComponentScan({"me.gking2224.budgetms", "me.gking2224.common"})
+//@ComponentScan({"me.gking2224.budgetms", "me.gking2224.common"})
 @ImportResource("classpath:budgetms-webapp-config.xml")
-@EnableWebMvc
+//@EnableWebMvc
+//@Component
 class WebAppConfigurer extends WebMvcConfigurerAdapter implements InitializingBean, ApplicationContextAware {
 
 //    @Autowired
 //    ModelObjectConverters modelObjectConverters;
 //    
     private ApplicationContext applicationContext;
+    
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+       PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
+       p.setLocations(
+               new ClassPathResource("webapp.properties"),
+               new ClassPathResource("database.properties"),
+               new ClassPathResource("datasource.properties"));
+       return p;
+    }
     
     @Bean
     public ApplicationListener<ContextRefreshedEvent> contextRefreshed() {
@@ -54,16 +67,11 @@ class WebAppConfigurer extends WebMvcConfigurerAdapter implements InitializingBe
         return fmc; 
     }
     
-    
     @Bean
     public FreeMarkerConfigurationFactoryBean getFreeMarkerConfigFactory() {
         FreeMarkerConfigurationFactoryBean f = new FreeMarkerConfigurationFactoryBean();
         f.setTemplateLoaderPath("/WEB-INF/ftl");
         return f;
-    }
-    
-    @Bean(name="longDateTimeFormat") DateTimeFormatter getLongDateTimeFormatter() {
-        return DateTimeFormatter.RFC_1123_DATE_TIME;
     }
     
     @Override
@@ -106,7 +114,7 @@ class WebAppConfigurer extends WebMvcConfigurerAdapter implements InitializingBe
     
     @Bean
     public PathMatcher antPathMatcher() {
-        AntPathMatcher matcher = new AntPathMatcher();;
+        AntPathMatcher matcher = new AntPathMatcher();
         return matcher;
     }
 

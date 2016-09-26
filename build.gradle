@@ -40,6 +40,9 @@ apply plugin: 'spring-boot'
 springBoot {
     executable = true
 }
+bootRun {
+    jvmArgs = ['-Xdebug', '-Xrunjdwp:server=y,transport=dt_socket,address=5056,suspend=n']
+}
 bootRepackage {
     mainClass = 'me.gking2224.budgetms.BudgetMicroServiceApplication'
 }

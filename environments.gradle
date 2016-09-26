@@ -22,6 +22,7 @@ environments {
         }
         webapp {
             contextPath="/budgets"
+            httpPort=8000
             ng {
                 buildDir = "dist"
                 port = 3000
@@ -39,10 +40,11 @@ environments {
         }
         webapp {
             contextPath="/budgets-local"
-                host="localhost"
-                ng {
+            host="localhost"
+            ng {
                 buildDir = "dist-local"
             }
+            httpPort=7000
         }
         springProfilesDefault = "dev"
     }
@@ -58,6 +60,7 @@ environments {
             ng {
                 buildDir = "dist-dev"
             }
+            httpPort=7020
         }
     }
     env("test") {
@@ -73,6 +76,7 @@ environments {
             ng {
                 buildDir = "dist-test"
             }
+            httpPort=7040
         }
     }
     env("prod") {
@@ -96,6 +100,7 @@ environments {
                 port = 3000
                 deleteIndexHtml=true
             }
+            httpPort=18000
         }
         springProfilesDefault = "dev"
     }

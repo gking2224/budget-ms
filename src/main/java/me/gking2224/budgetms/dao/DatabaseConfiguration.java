@@ -90,16 +90,6 @@ public class DatabaseConfiguration {
         ds.setPassword(jdbcPassword);
         return ds;
     }
-    
-    /**
-     * Property placeholder configurer needed to process @Value annotations
-     */
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-       PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
-       p.setLocations(new ClassPathResource("database.properties"), new ClassPathResource("datasource.properties"));
-       return p;
-    }
     protected String getJdbcUrl() {
         System.out.println("get url (superclass): "+jdbcUrl);
         return jdbcUrl;
