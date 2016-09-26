@@ -15,11 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import me.gking2224.budgetms.mvc.WebAppTestConfigurer;
+import me.gking2224.budgetms.mvc.BudgetsWebAppTestConfigurer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
-@ContextConfiguration(classes=WebAppTestConfigurer.class)
+@ContextConfiguration(classes=BudgetsWebAppTestConfigurer.class)
 @TestPropertySource("/test.properties")
 @Transactional()
 @EnableJpaRepositories

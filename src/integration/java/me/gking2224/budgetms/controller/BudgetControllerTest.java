@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.hasToString;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,13 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import me.gking2224.budgetms.jpa.Budget;
-import me.gking2224.budgetms.mvc.WebAppTestConfigurer;
+import me.gking2224.budgetms.mvc.BudgetsWebAppTestConfigurer;
 import me.gking2224.common.utils.JsonMvcTestHelper;
 import me.gking2224.common.utils.JsonUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
-@ContextConfiguration(classes=WebAppTestConfigurer.class)
+@ContextConfiguration(classes=BudgetsWebAppTestConfigurer.class)
 @Transactional
 @Rollback
 @Sql
