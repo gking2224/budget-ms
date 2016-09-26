@@ -1,0 +1,102 @@
+if (!project.hasProperty("env")) project.ext.env="local"
+environments {
+    env("all") {
+        database {
+            port = 3306
+            url = {"jdbc:mysql://${project.envProps.database.host}:3306/${project.envProps.database.name}"}
+            rootUrl = {"jdbc:mysql://${project.envProps.database.host}:3306/${project.envProps.database.root.name}"}
+            driver = "com.mysql.jdbc.Driver"
+            root {
+                name = "mysql"
+                username = "${project.rootDatabaseUsername}"
+                password = "${project.rootDatabasePassword}"
+            }
+            hibernate {
+                showSql = "true"
+                formatSql = "true"
+                generateStatistics = "true"
+                hbm2ddlAuto = "validate"
+                dialect = "org.hibernate.dialect.MySQLInnoDBDialect"
+            }
+            connectionPoolSize = 2
+        }
+        webapp {
+            contextPath="/budgets"
+            ng {
+                buildDir = "dist"
+                port = 3000
+                deleteIndexHtml=false
+            }
+        }
+        springProfilesDefault = "dev"
+    }
+    env("local") {
+        database {
+            name = "${project.localDatabaseName}"
+            host = "${project.localDatabaseHost}"
+            password = "${project.localDatabasePassword}"
+            username = "${project.localDatabaseUsername}"
+        }
+        webapp {
+            contextPath="/budgets-local"
+                host="localhost"
+                ng {
+                buildDir = "dist-local"
+            }
+        }
+        springProfilesDefault = "dev"
+    }
+    env( "dev") {
+        database {
+            name = "${project.devDatabaseName}"
+            host = "${project.devDatabaseHost}"
+            password = "${project.devDatabasePassword}"
+            username = "${project.devDatabaseUsername}"
+        }
+        webapp {
+            contextPath="/budgets-dev"
+            ng {
+                buildDir = "dist-dev"
+            }
+        }
+    }
+    env("test") {
+        database {
+            name = "${project.testDatabaseName}"
+            host = "${project.testDatabaseHost}"
+            password = "${project.testDatabasePassword}"
+            username = "${project.testDatabaseUsername}"
+        }
+        webapp {
+            contextPath="/budgets-test"
+            host="localhost"
+            ng {
+                buildDir = "dist-test"
+            }
+        }
+    }
+    env("prod") {
+        database {
+            name = "${project.prodDatabaseName}"
+            host = "${project.prodDatabaseHost}"
+            password = "${project.prodDatabasePassword}"
+            username = "${project.prodDatabaseUsername}"
+            hibernate {
+                showSql = "false"
+                formatSql = "false"
+                generateStatistics = "true"
+            }
+            connectionPoolSize = 10
+        }
+        webapp {
+            contextPath="/budgets"
+            host="${project.prodWebserverHost}"
+            ng {
+                buildDir = "dist-prod"
+                port = 3000
+                deleteIndexHtml=true
+            }
+        }
+        springProfilesDefault = "dev"
+    }
+}

@@ -1,0 +1,4 @@
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://host:3306/database?noAccessToProcedureBodies=true
+jdbc.username=user
+jdbc.password=pass
