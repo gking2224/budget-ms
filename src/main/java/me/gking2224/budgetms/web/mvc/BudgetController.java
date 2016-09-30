@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.controller;
+package me.gking2224.budgetms.web.mvc;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import me.gking2224.budgetms.jpa.Budget;
+import me.gking2224.budgetms.model.Budget;
 import me.gking2224.budgetms.service.BudgetService;
 import me.gking2224.common.utils.JsonUtil;
 
@@ -58,6 +58,7 @@ public class BudgetController {
             @RequestBody Budget budget) {
 
         Budget b = budgetService.createBudget(budget);
+        
         b = enrichType(b);
 
         HttpHeaders headers = new HttpHeaders();

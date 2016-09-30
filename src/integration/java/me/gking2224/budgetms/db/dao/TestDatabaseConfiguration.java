@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.dao;
+package me.gking2224.budgetms.db.dao;
 
 import javax.sql.DataSource;
 
@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import me.gking2224.budgetms.db.DatabaseConfiguration;
 
 //@Configuration
 //@Profile("xxx")
@@ -30,7 +32,7 @@ class TestDatabaseConfiguration extends DatabaseConfiguration {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
        PropertySourcesPlaceholderConfigurer p = new PropertySourcesPlaceholderConfigurer();
-       p.setLocation(new ClassPathResource("test-database.properties"));
+       p.setLocation(new ClassPathResource("test-datasource.properties"));
        return p;
     }
     

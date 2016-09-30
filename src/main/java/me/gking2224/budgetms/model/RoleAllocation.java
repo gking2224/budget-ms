@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.jpa;
+package me.gking2224.budgetms.model;
 
 
 
@@ -7,8 +7,6 @@ import static java.util.Collections.unmodifiableList;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,8 +28,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;

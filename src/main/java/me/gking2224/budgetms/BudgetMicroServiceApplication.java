@@ -11,14 +11,19 @@ import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebAppl
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import me.gking2224.budgetms.db.DatabaseConfiguration;
+import me.gking2224.budgetms.web.WebAppConfiguration;
+
 @Configuration
-@ComponentScan(basePackages={"me.gking2224.budgetms", "me.gking2224.common"})
+@ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model", "me.gking2224.common"})
 @EnableAutoConfiguration
 @EnableWebMvc
+@Import({WebAppConfiguration.class, DatabaseConfiguration.class})
 public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
     
     @Override

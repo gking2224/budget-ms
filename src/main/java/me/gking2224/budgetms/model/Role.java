@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.jpa;
+package me.gking2224.budgetms.model;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;

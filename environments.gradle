@@ -3,8 +3,8 @@ environments {
     env("all") {
         database {
             port = 3306
-            url = {"jdbc:mysql://${project.envProps.database.host}:3306/${project.envProps.database.name}"}
-            rootUrl = {"jdbc:mysql://${project.envProps.database.host}:3306/${project.envProps.database.root.name}"}
+            url = {"jdbc:mysql://${project.envProps.database.host}:${project.envProps.database.port}/${project.envProps.database.name}"}
+            rootUrl = {"jdbc:mysql://${project.envProps.database.host}:${project.envProps.database.port}/${project.envProps.database.root.name}"}
             driver = "com.mysql.jdbc.Driver"
             root {
                 name = "mysql"
@@ -12,8 +12,8 @@ environments {
                 password = "${project.rootDatabasePassword}"
             }
             hibernate {
-                showSql = "true"
-                formatSql = "true"
+                showSql = "false"
+                formatSql = "false"
                 generateStatistics = "true"
                 hbm2ddlAuto = "validate"
                 dialect = "org.hibernate.dialect.MySQLInnoDBDialect"
@@ -33,10 +33,18 @@ environments {
     }
     env("local") {
         database {
+            port = 7002
             name = "${project.localDatabaseName}"
             host = "${project.localDatabaseHost}"
             password = "${project.localDatabasePassword}"
             username = "${project.localDatabaseUsername}"
+            hibernate {
+                showSql = "false"
+                formatSql = "false"
+                generateStatistics = "true"
+                hbm2ddlAuto = "validate"
+            }
+            connectionPoolSize = 2
         }
         webapp {
             contextPath="/budgets-local"
@@ -93,7 +101,7 @@ environments {
             connectionPoolSize = 10
         }
         webapp {
-            contextPath="/budgets"
+            contextPath="/budgets-prod"
             host="${project.prodWebserverHost}"
             ng {
                 buildDir = "dist-prod"

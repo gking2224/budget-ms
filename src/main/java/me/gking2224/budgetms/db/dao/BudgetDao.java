@@ -1,8 +1,8 @@
-package me.gking2224.budgetms.dao;
+package me.gking2224.budgetms.db.dao;
 
 import java.util.List;
 
-import me.gking2224.budgetms.jpa.Budget;
+import me.gking2224.budgetms.model.Budget;
 
 public interface BudgetDao {
 

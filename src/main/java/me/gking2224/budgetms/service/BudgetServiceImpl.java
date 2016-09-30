@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import me.gking2224.budgetms.dao.BudgetDao;
-import me.gking2224.budgetms.jpa.Budget;
+import me.gking2224.budgetms.db.dao.BudgetDao;
+import me.gking2224.budgetms.model.Budget;
 
 @Component
 @Transactional(readOnly=true)

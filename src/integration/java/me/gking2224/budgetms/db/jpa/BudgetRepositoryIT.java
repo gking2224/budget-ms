@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.jpa;
+package me.gking2224.budgetms.db.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,7 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import me.gking2224.budgetms.mvc.BudgetsWebAppTestConfigurer;
+import me.gking2224.budgetms.model.Budget;
+import me.gking2224.budgetms.web.mvc.BudgetsWebAppTestConfigurer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()

@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.mvc;
+package me.gking2224.budgetms.web.mvc;
 
 
 import org.springframework.context.annotation.ComponentScan;

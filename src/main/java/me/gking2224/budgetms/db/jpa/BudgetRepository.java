@@ -1,8 +1,10 @@
-package me.gking2224.budgetms.jpa;
+package me.gking2224.budgetms.db.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import me.gking2224.budgetms.model.Budget;
 
 public interface BudgetRepository extends JpaRepository<Budget, Long>{
 

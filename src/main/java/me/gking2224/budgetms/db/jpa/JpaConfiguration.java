@@ -1,4 +1,4 @@
-package me.gking2224.budgetms.jpa;
+package me.gking2224.budgetms.db.jpa;
 
 import java.util.Properties;
 

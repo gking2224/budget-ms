@@ -1,37 +1,23 @@
-package me.gking2224.budgetms.dao;
+package me.gking2224.budgetms.db.dao;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import me.gking2224.budgetms.jpa.Budget;
-import me.gking2224.budgetms.jpa.BudgetRepository;
-import me.gking2224.budgetms.jpa.Role;
-import me.gking2224.budgetms.jpa.RoleAllocationRepository;
-import me.gking2224.budgetms.jpa.RoleRepository;
-import me.gking2224.common.db.jpa.AbstractDaoImpl;
+import me.gking2224.budgetms.db.jpa.BudgetRepository;
+import me.gking2224.budgetms.db.jpa.RoleAllocationRepository;
+import me.gking2224.budgetms.db.jpa.RoleRepository;
+import me.gking2224.budgetms.model.Budget;
+import me.gking2224.budgetms.model.Role;
+import me.gking2224.common.db.AbstractDaoImpl;
 
 @Component
 @Transactional
 public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao {
-
-//    @Autowired
-//    DateTimeFormatter dateTimeFormatter;
-
-    private EntityManager entityManager;
-
-    @PersistenceUnit
-    public void setEntityManagerFactory(EntityManagerFactory emf) {
-        this.entityManager = emf.createEntityManager();
-    }
     
     @Autowired
     protected BudgetRepository budgetRepository;
@@ -58,7 +44,7 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     public List<Budget> findAllBudgets() {
         List<Budget> budgets = budgetRepository.findAll();
         budgets.forEach( b -> {
-            entityManager.detach(b);
+            getEntityManager().detach(b);
             b.setRoles(null);
         });
         return budgets;
@@ -109,7 +95,7 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
 //            Hibernate.initialize(r.getAllocations());
 //        });
         
-        entityManager.detach(budget);
+        getEntityManager().detach(budget);
         return budget;
     }
 }

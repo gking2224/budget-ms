@@ -2,7 +2,7 @@ package me.gking2224.budgetms.service;
 
 import java.util.List;
 
-import me.gking2224.budgetms.jpa.Budget;
+import me.gking2224.budgetms.model.Budget;
 
 public interface BudgetService {
 
