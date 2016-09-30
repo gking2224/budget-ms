@@ -14,7 +14,7 @@ environments {
             hibernate {
                 showSql = "false"
                 formatSql = "false"
-                generateStatistics = "true"
+                generateStatistics = "false"
                 hbm2ddlAuto = "validate"
                 dialect = "org.hibernate.dialect.MySQLInnoDBDialect"
             }
@@ -29,7 +29,6 @@ environments {
                 deleteIndexHtml=false
             }
         }
-        springProfilesDefault = "dev"
     }
     env("local") {
         database {
@@ -41,7 +40,6 @@ environments {
             hibernate {
                 showSql = "false"
                 formatSql = "false"
-                generateStatistics = "true"
                 hbm2ddlAuto = "validate"
             }
             connectionPoolSize = 2
@@ -54,7 +52,6 @@ environments {
             }
             httpPort=7000
         }
-        springProfilesDefault = "dev"
     }
     env( "dev") {
         database {
@@ -96,7 +93,6 @@ environments {
             hibernate {
                 showSql = "false"
                 formatSql = "false"
-                generateStatistics = "true"
             }
             connectionPoolSize = 10
         }
@@ -110,6 +106,5 @@ environments {
             }
             httpPort=7060
         }
-        springProfilesDefault = "dev"
     }
 }
