@@ -2,13 +2,15 @@ package me.gking2224.budgetms.model;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableList;
+import static org.hibernate.annotations.CascadeType.DELETE_ORPHAN;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -25,9 +27,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import me.gking2224.common.web.View;
 
 @Entity
 @Table(name="ROLE")
@@ -62,6 +67,7 @@ public class Role implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "role_id")
     @JsonProperty("_id")
+    @JsonView(View.Summary.class)
     public Long getId() {
         return id;
     }
@@ -72,13 +78,13 @@ public class Role implements Serializable {
 
     @ManyToOne
     @JoinColumn(name="budget_id", nullable=false)
-    @JsonBackReference
     public Budget getBudget() {
         return budget;
         
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public String getName() {
         return name;
     }
@@ -88,16 +94,19 @@ public class Role implements Serializable {
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public String getComment() {
         return comment;
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public BigDecimal getRate() {
         return rate;
     }
 
     @Column(name="location_id")
+    @JsonView(View.Summary.class)
     public Long getLocationId() {
         return locationId;
     }
@@ -174,7 +183,7 @@ public class Role implements Serializable {
     }
     
     public void setFtes(List<BigDecimal> ftes) {
-        this.ftes = unmodifiableList(ftes);
+        this.ftes = ftes;
     }
     
     @Column(name="fte") // needed?
@@ -185,23 +194,24 @@ public class Role implements Serializable {
     )
     @OrderColumn(name="month", columnDefinition="TINYINT(4)")
     @OrderBy("month ASC")
+    @JsonView(View.Summary.class)
     public List<BigDecimal> getFtes() {
         return ftes;
     }
 
     public void setAllocations(Set<RoleAllocation> allocations) {
-        if (allocations != null) {
-            allocations.forEach(ra -> {
-                ra.setRole(this);
-            });
-        }
-        this.allocations = Collections.unmodifiableSet(allocations);
+        this.allocations = allocations;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity=RoleAllocation.class, fetch=FetchType.LAZY)
-    @JoinColumn(name = "role_id")
+    @OneToMany(cascade={CascadeType.ALL}, targetEntity=RoleAllocation.class, fetch=FetchType.EAGER, orphanRemoval=true, mappedBy="role")
+    @JsonView(View.Summary.class)
     public Set<RoleAllocation> getAllocations() {
         return allocations;
+    }
+    
+    public void addAllocation(RoleAllocation ra) {
+        ra.setRole(this);
+        allocations.add(ra);
     }
 
     @Override
@@ -210,4 +220,35 @@ public class Role implements Serializable {
                 "Role [id=%s, name=%s, budget=%s, rate=%s, comment=%s, locationId=%s, ftes=%s, allocations=%s]",
                 id, name, budget, rate, comment, locationId, ftes, allocations);
     }
+
+    @Transient
+    public Map<Long, RoleAllocation> getAllocationsById() {
+        return getAllocations().stream().collect(Collectors.toMap(a->a.getId(), a->a));
+    }
+
+    public void updateFrom(Role r) {
+        this.name = r.name;
+        this.comment = r.comment;
+        this.locationId = r.locationId;
+        this.rate = r.rate;
+        this.ftes = r.ftes;
+
+        r.allocations.iterator().forEachRemaining(a -> {
+            a.setRole(r);
+            if (a.getId() == null) {
+                this.allocations.add(a);
+            }
+            else {
+                this.getAllocationsById().get(a.getId()).updateFrom(a);
+            }
+        });
+        Set<Long> ids = r.allocations.stream().map(RoleAllocation::getId).collect(Collectors.toSet());
+        Iterator<RoleAllocation> it = this.allocations.iterator();
+        while (it.hasNext()) {
+            RoleAllocation next = it.next();
+            if (next.getId() != null && !ids.contains(next.getId())) it.remove();
+        };
+        
+    }
 }
+ 

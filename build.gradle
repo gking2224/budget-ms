@@ -19,14 +19,11 @@ buildscript {
         classpath "me.gking2224:AmazonAWSGradlePlugin:0.1.8-SNAPSHOT"
         classpath "me.gking2224:DatabaseBuildGradlePlugin:0.1.0-SNAPSHOT"
         classpath "me.gking2224:WebAppBuildGradlePlugin:0.0.1-SNAPSHOT"
-//        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.2'
-        classpath "org.akhikhl.gretty:gretty:1.2.4"
         classpath "mysql:mysql-connector-java:5.1.39"
     }
 }
 plugins {
   id "groovy"
-//  id "war"
   id 'net.saliman.cobertura' version '2.3.2'
 }
 
@@ -43,6 +40,7 @@ springBoot {
 bootRun {
     jvmArgs "-Xdebug"
     jvmArgs "-Xrunjdwp:server=y,transport=dt_socket,address=7001,suspend=y"
+    jvmArgs "-Dorg.jboss.logging.provider=slf4j"
     args = ["--spring.profiles.active=web"]
 }
 bootRepackage {
@@ -59,14 +57,10 @@ apply plugin: 'me.gking2224.buildtools'
 apply plugin: 'me.gking2224.awsplugin'
 apply plugin: 'me.gking2224.databasebuild'
 apply plugin: 'me.gking2224.webappbuild'
-apply plugin: "org.akhikhl.gretty"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-configurations {
-    compile.exclude group:'ch.qos.logback'
-}
 ext {
       springVersion = "4.3.1.RELEASE"
       springDataVersion = "1.10.2.RELEASE"
@@ -75,6 +69,8 @@ ext {
       freemarkerVersion = "2.3.23"
       slf4jVersion = "1.7.21"
       hibernateVersion = "5.2.1.Final"
+      mysqlVersion = "5.1.39"
+      logbackVersion = "1.1.1"
 }
 
 repositories {
@@ -93,15 +89,15 @@ dependencies {
     
     // LOGGING
     compile "org.slf4j:slf4j-api:$slf4jVersion"
-    runtime "org.slf4j:slf4j-log4j12:$slf4jVersion"
+    runtime "ch.qos.logback:logback-core:${logbackVersion}"
+    runtime "ch.qos.logback:logback-classic:${logbackVersion}"
+    runtime "ch.qos.logback:logback-access:${logbackVersion}"
+    runtime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    runtime "org.slf4j:jul-to-slf4j:$slf4jVersion"
+    compile "uk.org.lidalia:sysout-over-slf4j:1.0.2"
     
     // SPRING BOOT
-    compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion") {
-//    compile("org.springframework.boot:spring-boot-starter-tomcat:$springBootVersion")
-//    compile("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
-//    compile("org.springframework.boot:spring-boot-starter-jdbc:$springBootVersion")
-        exclude module: 'org.springframework.boot:spring-boot-starter-logging'
-    }
+    compile("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
     compile("org.springframework.boot:spring-boot:$springBootVersion")
     
     
@@ -128,17 +124,14 @@ dependencies {
     compile("org.springframework:spring-jdbc:$springVersion")
     compile "org.springframework:spring-orm:$springVersion"
     compile "org.hibernate:hibernate-core:$hibernateVersion"
-    compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.1.1'
-    runtime('mysql:mysql-connector-java:5.1.39')
+    compile ('org.apache.commons:commons-dbcp2:2.1.1')
+    runtime("mysql:mysql-connector-java:$mysqlVersion")
     runtime "mysql:mysql-connector-mxj:5.0.12"
-        
-//    runtime group: 'dom4j', name: 'dom4j', version: '1.6.1'
     
     
     // UTILS
     compile group: 'org.aspectj', name: 'aspectjtools', version: '1.6.2'
     compile("me.gking2224:gk-microservice-utils:0.0.1-SNAPSHOT")
-    
     
     
     // TESTING
@@ -150,17 +143,18 @@ dependencies {
     
     
     // RUNTIME
-//    runtime group: 'javax.servlet', name: 'jstl', version: '1.2'
     compile "org.apache.tomcat:tomcat-catalina:8.5.5"
-//    runtime group: 'javax.security.auth.message', name: 'jmac', version: '1.0'
     compile group: 'javax.security.auth.message', name: 'javax.security.auth.message-api', version: '1.1'
-    
-//    providedCompile "javax.servlet:javax.servlet-api:3.1.0"
 }
 cobertura {
     coverageDirs << file("build/integration-classes")
 }
 
+configurations.compile {
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+    exclude group: "log4j", module: "log4j"
+    exclude group: "commons-logging", module:"commons-logging"
+}
 /*
 applicationDefaultJvmArgs = [
     "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"

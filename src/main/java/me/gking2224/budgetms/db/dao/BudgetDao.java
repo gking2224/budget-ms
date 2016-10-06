@@ -8,12 +8,12 @@ public interface BudgetDao {
 
     Budget createBudget(Budget budget);
 
-    List<Budget> findAllBudgets();
+    List<Budget> findAll();
 
-    Budget updateBudget(Budget budget);
+    Budget update(Budget budget);
 
     void deleteBudget(Long id);
 
-    Budget findBudgetById(Long id);
+    Budget findById(Long id);
 
 }

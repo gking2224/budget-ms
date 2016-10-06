@@ -6,24 +6,20 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.gking2224.budgetms.BudgetsTestConfiguration;
 import me.gking2224.budgetms.model.Budget;
-import me.gking2224.budgetms.web.mvc.BudgetsWebAppTestConfigurer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration()
-@ContextConfiguration(classes=BudgetsWebAppTestConfigurer.class)
-@TestPropertySource("/test.properties")
-@Transactional()
-@EnableJpaRepositories
+@ActiveProfiles({"embedded"})
+@ContextConfiguration(classes=BudgetsTestConfiguration.class)
+@Transactional
 @Rollback
 public class BudgetRepositoryIT {
 
@@ -41,7 +37,7 @@ public class BudgetRepositoryIT {
     }
     
     @Test
-    @Sql
+    @Sql("../../SingleBudget.sql")
     public void testFindOne() {
         
         Budget b = repository.findOne(1L);

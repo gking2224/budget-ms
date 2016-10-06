@@ -17,13 +17,16 @@ import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import me.gking2224.budgetms.db.DatabaseConfiguration;
+import me.gking2224.budgetms.db.EmbeddedDatabaseConfiguration;
 import me.gking2224.budgetms.web.WebAppConfiguration;
+import me.gking2224.common.CommonConfiguration;
+import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 @Configuration
-@ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model", "me.gking2224.common"})
+@ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model"})
 @EnableAutoConfiguration
 @EnableWebMvc
-@Import({WebAppConfiguration.class, DatabaseConfiguration.class})
+@Import({WebAppConfiguration.class, DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class, CommonConfiguration.class})
 public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
     
     @Override
@@ -42,6 +45,8 @@ public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
                 .sources(BudgetMicroServiceApplication.class);
     }
     public static void main(String[] args) {
+        SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();
+
         // http://stackoverflow.com/questions/38802437/upgrading-spring-boot-from-1-3-7-to-1-4-0-causing-nullpointerexception-in-authen
         if (AuthConfigFactory.getFactory() == null) {
             AuthConfigFactory.setFactory(new AuthConfigFactoryImpl());

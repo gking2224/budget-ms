@@ -1,7 +1,6 @@
 package me.gking2224.budgetms.db.dao;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,50 +32,63 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
 
     @Override
     public Budget createBudget(Budget budget) {
-        Budget saved = budgetRepository.save(budget);
-        budget.getRoles().forEach(r -> r.setBudget(saved));
-        saved.setRoles(
-                budget.getRoles().stream().map(roleRepository::save).collect(Collectors.toSet()));
+//        Budget saved = budgetRepository.save(budget);
+//        budget.getRoles().forEach(r -> r.setBudget(saved));
+//        saved.setRoles(budget.getRoles().stream()
+//                .map(roleRepository::save)
+//                .collect(Collectors.toSet()));
+        Budget saved = update(budget);
         return saved;
     }
 
     @Override
-    public List<Budget> findAllBudgets() {
+    public List<Budget> findAll() {
         List<Budget> budgets = budgetRepository.findAll();
-        budgets.forEach( b -> {
-            getEntityManager().detach(b);
-            b.setRoles(null);
-        });
         return budgets;
     }
 
     @Override
-    public Budget updateBudget(Budget budget) {
+    public Budget update(final Budget b) {
+
+        Budget toSave = b;
+        if (b.getId() != null) {
+            toSave = budgetRepository.findOne(b.getId());
+            toSave.updateFrom(b);
+        }
         
-        Budget existing = budgetRepository.findOne(budget.getId());
-        existing.getRoles().clear();
-        
-        budget.getRoles().forEach(r -> {
-            r.setBudget(existing);
-        });
-        budget.setRoles(
-                budget.getRoles().stream().map(this::updateRole).collect(Collectors.toSet()));
-        Budget saved = budgetRepository.save(budget);
+        Budget saved = budgetRepository.save(toSave);
         return saved;
     }
-    
-    protected Role updateRole(Role role) {
+
+    protected Role updateRole(Budget existingBudget, Role r) {
+
+        Role role = r;
+//        if (r.getId() != null) {
+//            Role existing = roleRepository.findOne(r.getId());
+//    
+//            if (existing != null) {
+//                Map<Long, RoleAllocation> existingAllocations = existing.getAllocationsById();
+//                Map<Long, RoleAllocation> allocations = r.getAllocationsById();
+//                existingAllocations.keySet().forEach(i -> {
+//                    if (!allocations.containsKey(i)) {
+//                        RoleAllocation toDelete = existingAllocations.get(i);
+//                        existing.setAllocations(existing.getAllocations().stream()
+//                                .filter(a -> a.getId() != i)
+//                                .collect(Collectors.toSet()));
+//                    }
+//                });
+//                roleRepository.save(existing);
+//            }
+//        }
         
-        Role existing = roleRepository.findOne(role.getId());
-        existing.getAllocations().clear();
-        
-        role.getAllocations().forEach(r -> {
-            r.setRole(existing);
+        role.getAllocations().forEach(ra -> {
+            ra.setRole(r);
+            if (ra.getId() == null) {
+                role.addAllocation(ra);
+            }
         });
-        role.setAllocations(
-                role.getAllocations().stream().map(roleAllocationRepository::save).collect(Collectors.toSet()));
-        Role saved = roleRepository.save(role);
-        return saved;
+
+        return role;
     }
 
     @Override
@@ -86,16 +98,11 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     }
 
     @Override
-    public Budget findBudgetById(Long id) {
+    public Budget findById(Long id) {
         
         Budget budget = budgetRepository.findOne(id);
         Hibernate.initialize(budget.getRoles());
-//        budget.getRoles().forEach( r -> {
-//            Hibernate.initialize(r.getFtes());
-//            Hibernate.initialize(r.getAllocations());
-//        });
         
-        getEntityManager().detach(budget);
         return budget;
     }
 }

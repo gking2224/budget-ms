@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 import me.gking2224.budgetms.model.Budget;
 import me.gking2224.budgetms.service.BudgetService;
 import me.gking2224.common.utils.JsonUtil;
+import me.gking2224.common.web.View;
 
-@org.springframework.web.bind.annotation.RestController
+@RestController
 public class BudgetController {
 
     public static final String BUDGETS = "/budgets";
@@ -42,6 +46,7 @@ public class BudgetController {
 
 	// get budgets (all)
     @RequestMapping(value=BUDGETS, method=RequestMethod.GET)
+    @JsonView(View.Summary.class)
     public ResponseEntity<List<Budget>> getAllBudgets(
     ) {
         List<Budget> findAllBudgets = budgetService.findAllBudgets();
@@ -53,6 +58,7 @@ public class BudgetController {
     }
 
 	// create budget (post to budget)
+    @JsonView(View.Detail.class)
     @RequestMapping(value=BUDGETS, method=RequestMethod.POST, consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<Budget> newBudget(
             @RequestBody Budget budget) {
@@ -65,15 +71,17 @@ public class BudgetController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<Budget>(b, headers, HttpStatus.OK);
     }
+    
 
     // update budget (put at budgets)
+    @JsonView(View.Detail.class)
     @RequestMapping(value=BUDGET, method=RequestMethod.PUT, consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<Budget> updateBudget(
             @PathVariable("id") final Long id,
             @RequestBody final Budget budget) {
         Long typeId = budget.getId();
         if (typeId == null) budget.setId(id);
-        else if (typeId != id)
+        else if (typeId.longValue() != id.longValue())
             throw new IllegalArgumentException("Illegal attempt to change immutable field (id)");
         Budget mt = budgetService.updateBudget(budget);
         mt = enrichType(mt);
@@ -97,6 +105,7 @@ public class BudgetController {
     }
 
     // get budget by id
+    @JsonView(View.Detail.class)
     @RequestMapping(value=BUDGET, method=RequestMethod.GET)
     public ResponseEntity<Budget> getBudget(
             @PathVariable("id") final Long id) {

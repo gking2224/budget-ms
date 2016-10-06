@@ -28,13 +28,13 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public List<Budget> findAllBudgets() {
-        return dao.findAllBudgets();
+        return dao.findAll();
     }
 
     @Override
     @Transactional(readOnly=false)
     public Budget updateBudget(Budget budget) {
-        return dao.updateBudget(budget);
+        return dao.update(budget);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public Budget findBudgetById(Long id) {
-        return dao.findBudgetById(id);
+        return dao.findById(id);
     }
 
 }

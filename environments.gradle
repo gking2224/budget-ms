@@ -1,4 +1,4 @@
-if (!project.hasProperty("env")) project.ext.env="local"
+if (!project.hasProperty("env")) project.ext.env="embedded"
 environments {
     env("all") {
         database {
@@ -50,6 +50,26 @@ environments {
             ng {
                 buildDir = "dist-local"
             }
+            httpPort=7000
+        }
+    }
+    env("embedded") {
+        database {
+            port = 7002
+            name = "${project.localDatabaseName}"
+            host = "${project.localDatabaseHost}"
+            password = "${project.localDatabasePassword}"
+            username = "${project.localDatabaseUsername}"
+            hibernate {
+                showSql = "false"
+                formatSql = "false"
+                hbm2ddlAuto = "validate"
+            }
+            connectionPoolSize = 2
+        }
+        webapp {
+            contextPath="/budgets-local"
+            host="localhost"
             httpPort=7000
         }
     }

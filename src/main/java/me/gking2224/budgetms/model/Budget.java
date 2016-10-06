@@ -1,7 +1,10 @@
 package me.gking2224.budgetms.model;
 
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,11 +18,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import me.gking2224.common.web.View;
 
 @Entity
-@Table (name="BUDGET")
+@Table
 public class Budget implements java.io.Serializable {
 
     /**
@@ -46,19 +51,12 @@ public class Budget implements java.io.Serializable {
         this.name = name;
         this.projectId =projectId;
     }
-    
-    @OneToMany(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
-    @JoinColumn(name = "budget_id")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JsonIgnore
-    public Set<Role> getRoles() {
-        return roles;
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "budget_id")
     @JsonProperty("_id")
+    @JsonView(View.Summary.class)
     public Long getId() {
         return id;
     }
@@ -68,6 +66,7 @@ public class Budget implements java.io.Serializable {
     }
 
     @Column(name = "project_id")
+    @JsonView(View.Summary.class)
     public Long getProjectId() {
         return projectId;
     }
@@ -77,6 +76,7 @@ public class Budget implements java.io.Serializable {
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public String getName() {
         return name;
     }
@@ -86,19 +86,36 @@ public class Budget implements java.io.Serializable {
     }
 
     @Transient
+    @JsonView(View.Summary.class)
     public String getLocation() {
         return this.location;
     }
     public void setLocation(String location) {
         this.location = location;
     }
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY, orphanRemoval=true, mappedBy="budget")
+    @JsonView(View.Detail.class)
+    public Set<Role> getRoles() {
+        return roles;
+    }
+    
+    public void addRole(Role role) {
+        role.setBudget(this);
+        roles.add(role);
+    }
+    
+    @Transient
+    public Map<Long, Role> getRolesById() {
+        return getRoles().stream().collect(Collectors.toMap(r -> r.getId(), r -> r));
+    }
 
     public void setRoles(Set<Role> roles) {
-        if (roles != null) {
-            roles.forEach(r -> {
-                r.setBudget(this);
-            });
-        }
+//        if (roles != null) {
+//            roles.forEach(r -> {
+//                r.setBudget(this);
+//            });
+//        }
         this.roles = roles;
     }
 
@@ -153,7 +170,28 @@ public class Budget implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return String.format("Budget [id=%s, projectId=%s, name=%s, location=%s, roles=%s]",
-                id, projectId, name, location, roles);
+        return String.format("Budget [id=%s, projectId=%s, name=%s, location=%s]",
+                id, projectId, name, location);
+    }
+
+    public void updateFrom(Budget b) {
+        this.name = b.name;
+        this.projectId = b.projectId;
+        b.roles.iterator().forEachRemaining(r -> {
+            r.setBudget(this);
+            if (r.getId() == null) {
+                this.getRoles().add(r);
+            }
+            else {
+                this.getRolesById().get(r.getId()).updateFrom(r);
+            }
+        });
+        Set<Long> ids = b.roles.stream().map(Role::getId).collect(Collectors.toSet());
+        Iterator<Role> it = this.roles.iterator();
+        while (it.hasNext()) {
+            Role next = it.next();
+            if (next.getId() != null && !ids.contains(next.getId())) it.remove();
+        };
+        
     }
 }

@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,16 +30,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import me.gking2224.budgetms.model.Budget;
-import me.gking2224.budgetms.web.mvc.BudgetsWebAppTestConfigurer;
+import me.gking2224.budgetms.web.mvc.BudgetsWebAppTestConfiguration;
 import me.gking2224.common.utils.JsonMvcTestHelper;
 import me.gking2224.common.utils.JsonUtil;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
-@ContextConfiguration(classes=BudgetsWebAppTestConfigurer.class)
+@ActiveProfiles({"embedded", "web"})
+@ContextConfiguration(classes=BudgetsWebAppTestConfiguration.class)
 @Transactional
 @Rollback
-@Sql
+@Sql("../../../SingleBudget.sql")
 public class BudgetControllerTest {
 
     @Autowired

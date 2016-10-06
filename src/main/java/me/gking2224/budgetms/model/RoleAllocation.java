@@ -1,9 +1,6 @@
 package me.gking2224.budgetms.model;
 
-
-
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,11 +26,12 @@ import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 
+import me.gking2224.common.web.View;
 
 @Entity
 @Table(name="ROLE_ALLOCATION")
@@ -66,34 +64,37 @@ public class RoleAllocation implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "role_allocation_id")
     @JsonProperty("_id")
+    @JsonView(View.Summary.class)
     public Long getId() {
         return id;
     }
     
     @ManyToOne
     @JoinColumn(name="role_id", nullable=false)
-    @JsonBackReference
     public Role getRole() {
         return role;
-        
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public String getComment() {
         return comment;
     }
 
     @Column
+    @JsonView(View.Summary.class)
     public BigDecimal getRate() {
         return rate;
     }
 
     @Column(name = "location_id")
+    @JsonView(View.Summary.class)
     public Long getLocationId() {
         return locationId;
     }
 
     @Column(name = "resource_id")
+    @JsonView(View.Summary.class)
     public Long getResourceId() {
         return resourceId;
     }
@@ -123,7 +124,7 @@ public class RoleAllocation implements Serializable {
     }
     
     public void setFtes(List<AllocationFte> ftes) {
-        this.ftes = unmodifiableList(ftes);
+        this.ftes = ftes;
     }
     
     @JsonIgnore
@@ -139,13 +140,17 @@ public class RoleAllocation implements Serializable {
     }
     
     public void setActuals(List<BigDecimal> actuals) {
-        List<AllocationFte> ftes = getFtes().stream().filter(f -> f.getType() != AllocationFte.AllocationType.ACTUALS).collect(Collectors.toList());
+        List<AllocationFte> ftes = getFtes().stream()
+                .filter(f -> f.getType() != AllocationFte.AllocationType.ACTUALS)
+                .collect(Collectors.toList());
         ftes.addAll(convertToFtes(actuals, AllocationFte.AllocationType.ACTUALS));
         setFtes(ftes);
     }
     
     public void setForecast(List<BigDecimal> forecast) {
-        List<AllocationFte> ftes = getFtes().stream().filter(f -> f.getType() != AllocationFte.AllocationType.FORECAST).collect(Collectors.toList());
+        List<AllocationFte> ftes = getFtes().stream()
+                .filter(f -> f.getType() != AllocationFte.AllocationType.FORECAST)
+                .collect(Collectors.toList());
         ftes.addAll(convertToFtes(forecast, AllocationFte.AllocationType.FORECAST));
         setFtes(ftes);
     }
@@ -165,16 +170,22 @@ public class RoleAllocation implements Serializable {
     
     @Transient
     @JsonInclude
+    @JsonView(View.Summary.class)
     public List<BigDecimal> getActuals() {
-        return unmodifiableList(
-                getFtes().stream().filter(f -> AllocationFte.AllocationType.ACTUALS == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList()));
+        return getFtes().stream()
+                .filter(f -> AllocationFte.AllocationType.ACTUALS == f.getType())
+                .map(AllocationFte::getFte)
+                .collect(Collectors.toList());
     }
     
     @Transient
     @JsonInclude
+    @JsonView(View.Summary.class)
     public List<BigDecimal> getForecast() {
-        return unmodifiableList(
-                getFtes().stream().filter(f -> AllocationFte.AllocationType.FORECAST == f.getType()).map(AllocationFte::getFte).collect(Collectors.toList()));
+        return getFtes().stream()
+                .filter(f -> AllocationFte.AllocationType.FORECAST == f.getType())
+                .map(AllocationFte::getFte)
+                .collect(Collectors.toList());
     }
     @Embeddable
     private static class AllocationFte {
@@ -220,7 +231,7 @@ public class RoleAllocation implements Serializable {
         result = prime * result + ((locationId == null) ? 0 : locationId.hashCode());
         result = prime * result + ((rate == null) ? 0 : rate.hashCode());
         result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
+//        result = prime * result + ((role == null) ? 0 : role.hashCode());
         return result;
     }
 
@@ -263,18 +274,26 @@ public class RoleAllocation implements Serializable {
                 return false;
         } else if (!resourceId.equals(other.resourceId))
             return false;
-        if (role == null) {
-            if (other.role != null)
-                return false;
-        } else if (!role.equals(other.role))
-            return false;
+//        if (role == null) {
+//            if (other.role != null)
+//                return false;
+//        } else if (!role.equals(other.role))
+//            return false;
         return true;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "RoleAllocation [id=%s, role=%s, rate=%s, comment=%s, locationId=%s, resourceId=%s, ftes=%s]",
-                id, role, rate, comment, locationId, resourceId, ftes);
+                "RoleAllocation [id=%s, rate=%s, comment=%s, locationId=%s, resourceId=%s, ftes=%s]",
+                id, /*role, */rate, comment, locationId, resourceId, ftes);
+    }
+
+    public void updateFrom(RoleAllocation a) {
+        this.comment = a.comment;
+        this.ftes = a.ftes;
+        this.locationId = a.locationId;
+        this.rate = a.rate;
+        this.resourceId = a.resourceId;
     }
 }
