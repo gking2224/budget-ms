@@ -67,7 +67,7 @@ public class BudgetControllerTest {
     @Test
     public void testNewBudget() throws Exception {
         long projectId = 1L;
-        Budget b = new Budget("Budget", projectId);
+        Budget b = new Budget("Budget", projectId, 2016);
         ResultActions result = doPost(this.mockMvc, b, BUDGETS, JsonMvcTestHelper::expectOK);
         result
             .andExpect(jsonPath("$._id").isNotEmpty())
@@ -90,7 +90,7 @@ public class BudgetControllerTest {
         String newName = "Budget.x";
         long projectId = 1L;
         long id = 1L;
-        Budget b = new Budget(newName, projectId);
+        Budget b = new Budget(newName, projectId, 2016);
         
         doPut(this.mockMvc, b, format("%s/%s", BUDGETS, id), JsonMvcTestHelper::expectOK)
             .andExpect(jsonPath("$._id").value(hasToString(valueOf(id))))

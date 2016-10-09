@@ -1,11 +1,9 @@
 package me.gking2224.budgetms.model;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
-import static org.hibernate.annotations.CascadeType.DELETE_ORPHAN;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +53,9 @@ public class Role implements Serializable {
     
     private Long locationId;
     
-    private List<BigDecimal> ftes = emptyList();
+    private List<BigDecimal> ftes = new ArrayList<BigDecimal>();
     
-    private Set<RoleAllocation> allocations = emptySet();
+    private Set<RoleAllocation> allocations = new HashSet<RoleAllocation>();
     
     public Role() {
         
@@ -223,7 +221,14 @@ public class Role implements Serializable {
 
     @Transient
     public Map<Long, RoleAllocation> getAllocationsById() {
-        return getAllocations().stream().collect(Collectors.toMap(a->a.getId(), a->a));
+        return getAllocations().stream().filter(ra -> ra.getId() != null).collect(Collectors.toMap(
+                a-> {
+                    return a.getId();
+                },
+                a -> {
+                    return a;
+                }
+        ));
     }
 
     public void updateFrom(Role r) {

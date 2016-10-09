@@ -29,6 +29,7 @@ import me.gking2224.common.utils.JsonUtil;
 import me.gking2224.common.web.View;
 
 @RestController
+@RequestMapping(value="/budgets")
 public class BudgetController {
 
     public static final String BUDGETS = "/budgets";
@@ -45,12 +46,12 @@ public class BudgetController {
 	JsonUtil jsonUtil;
 
 	// get budgets (all)
-    @RequestMapping(value=BUDGETS, method=RequestMethod.GET)
+    @RequestMapping(value="", method=RequestMethod.GET)
     @JsonView(View.Summary.class)
     public ResponseEntity<List<Budget>> getAllBudgets(
     ) {
-        List<Budget> findAllBudgets = budgetService.findAllBudgets();
-        List<Budget> b = findAllBudgets.stream().map(this::enrichType).collect(toList());
+        List<Budget> b = budgetService.findAllBudgets();
+        b = b.stream().map(this::enrichType).collect(toList());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(APPLICATION_JSON);
@@ -59,11 +60,11 @@ public class BudgetController {
 
 	// create budget (post to budget)
     @JsonView(View.Detail.class)
-    @RequestMapping(value=BUDGETS, method=RequestMethod.POST, consumes=APPLICATION_JSON_VALUE)
+    @RequestMapping(value="", method=RequestMethod.POST, consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<Budget> newBudget(
             @RequestBody Budget budget) {
 
-        Budget b = budgetService.createBudget(budget);
+        Budget b = budgetService.create(budget);
         
         b = enrichType(b);
 
@@ -75,7 +76,7 @@ public class BudgetController {
 
     // update budget (put at budgets)
     @JsonView(View.Detail.class)
-    @RequestMapping(value=BUDGET, method=RequestMethod.PUT, consumes=APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{id}", method=RequestMethod.PUT, consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<Budget> updateBudget(
             @PathVariable("id") final Long id,
             @RequestBody final Budget budget) {
@@ -83,7 +84,7 @@ public class BudgetController {
         if (typeId == null) budget.setId(id);
         else if (typeId.longValue() != id.longValue())
             throw new IllegalArgumentException("Illegal attempt to change immutable field (id)");
-        Budget mt = budgetService.updateBudget(budget);
+        Budget mt = budgetService.update(budget);
         mt = enrichType(mt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -92,12 +93,12 @@ public class BudgetController {
     }
 
     // delete budget by id
-    @RequestMapping(value=BUDGET, method=RequestMethod.DELETE, consumes=APPLICATION_JSON_VALUE)
+    @RequestMapping(value="/{id}", method=RequestMethod.DELETE, consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> deleteBudget(
             @PathVariable("id") final Long id) {
         logger.debug(BUDGETS);
 
-        budgetService.deleteBudget(id);
+        budgetService.delete(id);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -106,7 +107,7 @@ public class BudgetController {
 
     // get budget by id
     @JsonView(View.Detail.class)
-    @RequestMapping(value=BUDGET, method=RequestMethod.GET)
+    @RequestMapping(value="/{id}", method=RequestMethod.GET)
     public ResponseEntity<Budget> getBudget(
             @PathVariable("id") final Long id) {
         Budget b = budgetService.findBudgetById(id);
@@ -117,8 +118,34 @@ public class BudgetController {
         return new ResponseEntity<Budget>(b, HttpStatus.OK);
     }
 
+    // get budget by project id
+    @JsonView(View.Detail.class)
+    @RequestMapping(value="/project/{projectId}", method=RequestMethod.GET)
+    public ResponseEntity<List<Budget>> getBudgetsByProjectId(
+            @PathVariable("projectId") final Long projectId) {
+        List<Budget> b = budgetService.findByProjectId(projectId);
+        b = b.stream().map(this::enrichType).collect(toList());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<List<Budget>>(b, HttpStatus.OK);
+    }
+
+    // get budget by resource id
+    @JsonView(View.Detail.class)
+    @RequestMapping(value="/resource/{resourceId}", method=RequestMethod.GET)
+    public ResponseEntity<List<Budget>> getBudgetsByResourceId(
+            @PathVariable("resourceId") final Long resourceId) {
+        List<Budget> b = budgetService.findByResourceId(resourceId);
+        b = b.stream().map(this::enrichType).collect(toList());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<List<Budget>>(b, HttpStatus.OK);
+    }
+
     private Budget enrichType(Budget b) {
-        b.setLocation(BUDGETS + "/"+ b.getId());
+        b.setLocation(String.format("/budgets/%s", b.getId()));
         return b;
     }
 }

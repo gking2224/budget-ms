@@ -31,12 +31,7 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     }
 
     @Override
-    public Budget createBudget(Budget budget) {
-//        Budget saved = budgetRepository.save(budget);
-//        budget.getRoles().forEach(r -> r.setBudget(saved));
-//        saved.setRoles(budget.getRoles().stream()
-//                .map(roleRepository::save)
-//                .collect(Collectors.toSet()));
+    public Budget create(Budget budget) {
         Budget saved = update(budget);
         return saved;
     }
@@ -55,6 +50,16 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
             toSave = budgetRepository.findOne(b.getId());
             toSave.updateFrom(b);
         }
+        else {
+            final Budget parent = toSave;
+            toSave.getRoles().forEach(r -> {
+                r.setBudget(parent);
+                final Role parentRole = r;
+                r.getAllocations().forEach(ra -> {
+                    ra.setRole(parentRole);
+                });
+            });
+        }
         
         Budget saved = budgetRepository.save(toSave);
         return saved;
@@ -63,23 +68,6 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     protected Role updateRole(Budget existingBudget, Role r) {
 
         Role role = r;
-//        if (r.getId() != null) {
-//            Role existing = roleRepository.findOne(r.getId());
-//    
-//            if (existing != null) {
-//                Map<Long, RoleAllocation> existingAllocations = existing.getAllocationsById();
-//                Map<Long, RoleAllocation> allocations = r.getAllocationsById();
-//                existingAllocations.keySet().forEach(i -> {
-//                    if (!allocations.containsKey(i)) {
-//                        RoleAllocation toDelete = existingAllocations.get(i);
-//                        existing.setAllocations(existing.getAllocations().stream()
-//                                .filter(a -> a.getId() != i)
-//                                .collect(Collectors.toSet()));
-//                    }
-//                });
-//                roleRepository.save(existing);
-//            }
-//        }
         
         role.getAllocations().forEach(ra -> {
             ra.setRole(r);
@@ -92,7 +80,7 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     }
 
     @Override
-    public void deleteBudget(Long id) {
+    public void delete(Long id) {
         
         budgetRepository.delete(id);
     }
@@ -104,5 +92,15 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
         Hibernate.initialize(budget.getRoles());
         
         return budget;
+    }
+
+    @Override
+    public List<Budget> findByProjectId(Long projectId) {
+        return budgetRepository.findByProjectId(projectId);
+    }
+
+    @Override
+    public List<Budget> findByResourceId(Long resourceId) {
+        return budgetRepository.findByRoles_Allocations_ResourceId(resourceId);
     }
 }

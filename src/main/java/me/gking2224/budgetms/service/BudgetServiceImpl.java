@@ -22,8 +22,8 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     @Transactional(readOnly=false)
-    public Budget createBudget(Budget budget) {
-        return dao.createBudget(budget);
+    public Budget create(final Budget budget) {
+        return dao.create(budget);
     }
 
     @Override
@@ -33,19 +33,29 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     @Transactional(readOnly=false)
-    public Budget updateBudget(Budget budget) {
+    public Budget update(final Budget budget) {
         return dao.update(budget);
     }
 
     @Override
     @Transactional(readOnly=false)
-    public void deleteBudget(Long id) {
-        dao.deleteBudget(id);
+    public void delete(final Long id) {
+        dao.delete(id);
     }
 
     @Override
-    public Budget findBudgetById(Long id) {
+    public Budget findBudgetById(final Long id) {
         return dao.findById(id);
+    }
+
+    @Override
+    public List<Budget> findByProjectId(final Long projectId) {
+        return dao.findByProjectId(projectId);
+    }
+
+    @Override
+    public List<Budget> findByResourceId(Long resourceId) {
+        return dao.findByResourceId(resourceId);
     }
 
 }

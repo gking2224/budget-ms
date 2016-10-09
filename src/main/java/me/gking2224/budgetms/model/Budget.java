@@ -1,6 +1,6 @@
 package me.gking2224.budgetms.model;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -40,16 +39,19 @@ public class Budget implements java.io.Serializable {
 
     private String location;
     
-    private Set<Role> roles = Collections.emptySet();
+    private int year;
+    
+    private Set<Role> roles = new HashSet<Role>();
     
     public Budget() {
         super();
     }
     
-    public Budget(String name, Long projectId) {
+    public Budget(String name, Long projectId, int year) {
         this();
         this.name = name;
         this.projectId =projectId;
+        this.year = year;
     }
 
     @Id
@@ -107,7 +109,7 @@ public class Budget implements java.io.Serializable {
     
     @Transient
     public Map<Long, Role> getRolesById() {
-        return getRoles().stream().collect(Collectors.toMap(r -> r.getId(), r -> r));
+        return getRoles().stream().filter(r -> r.getId() != null).collect(Collectors.toMap(r -> r.getId(), r -> r));
     }
 
     public void setRoles(Set<Role> roles) {
@@ -120,58 +122,9 @@ public class Budget implements java.io.Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((location == null) ? 0 : location.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((projectId == null) ? 0 : projectId.hashCode());
-        result = prime * result + ((roles == null) ? 0 : roles.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Budget other = (Budget) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (location == null) {
-            if (other.location != null)
-                return false;
-        } else if (!location.equals(other.location))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (projectId == null) {
-            if (other.projectId != null)
-                return false;
-        } else if (!projectId.equals(other.projectId))
-            return false;
-        if (roles == null) {
-            if (other.roles != null)
-                return false;
-        } else if (!roles.equals(other.roles))
-            return false;
-        return true;
-    }
-
-    @Override
     public String toString() {
-        return String.format("Budget [id=%s, projectId=%s, name=%s, location=%s]",
-                id, projectId, name, location);
+        return String.format("Budget [id=%s, projectId=%s, year=%s, name=%s, location=%s]",
+                id, projectId, year, name, location);
     }
 
     public void updateFrom(Budget b) {
@@ -193,5 +146,49 @@ public class Budget implements java.io.Serializable {
             if (next.getId() != null && !ids.contains(next.getId())) it.remove();
         };
         
+    }
+
+    @Column
+    @JsonView(View.Summary.class)
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + year;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Budget other = (Budget) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (year != other.year)
+            return false;
+        return true;
     }
 }

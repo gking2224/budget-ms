@@ -1,5 +1,7 @@
 package me.gking2224.budgetms.db.jpa;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +19,8 @@ public interface BudgetRepository extends JpaRepository<Budget, Long>{
             "inner join role_allocation_fte raf on raf.role_allocation_id = ra.role_allocation_id "+
             "where b.budget_id= ?1", nativeQuery=true)
     void delete(Long id);
+
+    List<Budget> findByProjectId(Long projectId);
+
+    List<Budget> findByRoles_Allocations_ResourceId(Long resourceId);
 }

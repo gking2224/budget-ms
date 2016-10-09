@@ -1,9 +1,8 @@
 package me.gking2224.budgetms.model;
 
-import static java.util.Collections.emptyList;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -54,7 +53,7 @@ public class RoleAllocation implements Serializable {
     
     private Long resourceId;
     
-    private List<AllocationFte> ftes = emptyList();
+    private List<AllocationFte> ftes = new ArrayList<AllocationFte>();
     
     public RoleAllocation() {
         
@@ -220,6 +219,11 @@ public class RoleAllocation implements Serializable {
         static enum AllocationType {
             FORECAST, ACTUALS;
         }
+
+        @Override
+        public String toString() {
+            return String.format("AllocationFte [type=%s, fte=%s]", type, fte);
+        }
     }
     @Override
     public int hashCode() {
@@ -285,8 +289,8 @@ public class RoleAllocation implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "RoleAllocation [id=%s, rate=%s, comment=%s, locationId=%s, resourceId=%s, ftes=%s]",
-                id, /*role, */rate, comment, locationId, resourceId, ftes);
+                "RoleAllocation [id=%s, rate=%s, comment=%s, locationId=%s, resourceId=%s, forecast=%s, actuals=%s]",
+                id, /*role, */rate, comment, locationId, resourceId, getForecast(), getActuals());
     }
 
     public void updateFrom(RoleAllocation a) {

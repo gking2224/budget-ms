@@ -6,15 +6,19 @@ import me.gking2224.budgetms.model.Budget;
 
 public interface BudgetService {
 
-    Budget createBudget(Budget budget);
+    Budget create(Budget budget);
 
     List<Budget> findAllBudgets();
 
-    Budget updateBudget(Budget budget);
+    Budget update(Budget budget);
 
-    void deleteBudget(Long id);
+    void delete(Long id);
 
     Budget findBudgetById(Long id);
+
+    List<Budget> findByProjectId(Long projectId);
+
+    List<Budget> findByResourceId(Long resourceId);
 
 //    ModelManifest createModelManifest(ModelManifest manifest);
 //

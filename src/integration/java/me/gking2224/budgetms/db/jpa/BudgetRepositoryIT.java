@@ -31,7 +31,7 @@ public class BudgetRepositoryIT {
         String name = "budget1";
         Long projectId = 1L;
         
-        Budget b = new Budget(name, projectId);
+        Budget b = new Budget(name, projectId, 2016);
         Budget saved = repository.save(b);
         assertNotNull(saved);
     }

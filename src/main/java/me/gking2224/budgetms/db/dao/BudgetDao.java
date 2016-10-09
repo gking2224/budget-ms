@@ -6,14 +6,18 @@ import me.gking2224.budgetms.model.Budget;
 
 public interface BudgetDao {
 
-    Budget createBudget(Budget budget);
+    Budget create(Budget budget);
 
     List<Budget> findAll();
 
     Budget update(Budget budget);
 
-    void deleteBudget(Long id);
+    void delete(Long id);
 
     Budget findById(Long id);
+
+    List<Budget> findByProjectId(Long projectId);
+
+    List<Budget> findByResourceId(Long resourceId);
 
 }
