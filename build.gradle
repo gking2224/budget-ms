@@ -41,7 +41,7 @@ bootRun {
     jvmArgs "-Xdebug"
     jvmArgs "-Xrunjdwp:server=y,transport=dt_socket,address=7001,suspend=y"
     jvmArgs "-Dorg.jboss.logging.provider=slf4j"
-    args = ["--spring.profiles.active=web,"+project.env]
+    args = ["--spring.profiles.active=web"]
 }
 bootRepackage {
     mainClass = 'me.gking2224.budgetms.BudgetMicroServiceApplication'
