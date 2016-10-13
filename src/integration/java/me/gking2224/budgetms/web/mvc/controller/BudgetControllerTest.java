@@ -3,10 +3,10 @@ package me.gking2224.budgetms.web.mvc.controller;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static me.gking2224.budgetms.web.mvc.BudgetController.BUDGETS;
-import static me.gking2224.common.utils.JsonMvcTestHelper.doGet;
-import static me.gking2224.common.utils.JsonMvcTestHelper.doPost;
-import static me.gking2224.common.utils.JsonMvcTestHelper.doPut;
-import static me.gking2224.common.utils.JsonMvcTestHelper.responseContent;
+import static me.gking2224.common.utils.test.JsonMvcTestHelper.doGet;
+import static me.gking2224.common.utils.test.JsonMvcTestHelper.doPost;
+import static me.gking2224.common.utils.test.JsonMvcTestHelper.doPut;
+import static me.gking2224.common.utils.test.JsonMvcTestHelper.responseContent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasToString;
@@ -31,8 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import me.gking2224.budgetms.model.Budget;
 import me.gking2224.budgetms.web.mvc.BudgetsWebAppTestConfiguration;
-import me.gking2224.common.utils.JsonMvcTestHelper;
 import me.gking2224.common.utils.JsonUtil;
+import me.gking2224.common.utils.test.JsonMvcTestHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration()
