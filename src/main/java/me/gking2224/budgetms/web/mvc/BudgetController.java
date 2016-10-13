@@ -50,7 +50,7 @@ public class BudgetController {
     @JsonView(View.Summary.class)
     public ResponseEntity<List<Budget>> getAllBudgets(
     ) {
-        List<Budget> b = budgetService.findAllBudgets();
+        List<Budget> b = budgetService.findAll();
         b = b.stream().map(this::enrichType).collect(toList());
 
         HttpHeaders headers = new HttpHeaders();
@@ -64,7 +64,7 @@ public class BudgetController {
     public ResponseEntity<Budget> newBudget(
             @RequestBody Budget budget) {
 
-        Budget b = budgetService.create(budget);
+        Budget b = budgetService.save(budget);
         
         b = enrichType(b);
 
@@ -110,7 +110,7 @@ public class BudgetController {
     @RequestMapping(value="/{id}", method=RequestMethod.GET)
     public ResponseEntity<Budget> getBudget(
             @PathVariable("id") final Long id) {
-        Budget b = budgetService.findBudgetById(id);
+        Budget b = budgetService.findById(id);
         b = enrichType(b);
 
         HttpHeaders headers = new HttpHeaders();

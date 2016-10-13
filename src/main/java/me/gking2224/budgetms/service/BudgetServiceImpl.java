@@ -8,44 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import me.gking2224.budgetms.db.dao.BudgetDao;
 import me.gking2224.budgetms.model.Budget;
+import me.gking2224.common.db.dao.CrudDao;
+import me.gking2224.common.service.AbstractCrudServiceImpl;
 
 @Component
 @Transactional(readOnly=true)
-public class BudgetServiceImpl implements BudgetService {
+public class BudgetServiceImpl extends AbstractCrudServiceImpl<Budget, Long> implements BudgetService {
 
 
     @Autowired
     private BudgetDao dao;
 
     public BudgetServiceImpl() {
-    }
-
-    @Override
-    @Transactional(readOnly=false)
-    public Budget create(final Budget budget) {
-        return dao.create(budget);
-    }
-
-    @Override
-    public List<Budget> findAllBudgets() {
-        return dao.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly=false)
-    public Budget update(final Budget budget) {
-        return dao.update(budget);
-    }
-
-    @Override
-    @Transactional(readOnly=false)
-    public void delete(final Long id) {
-        dao.delete(id);
-    }
-
-    @Override
-    public Budget findBudgetById(final Long id) {
-        return dao.findById(id);
     }
 
     @Override
@@ -56,6 +30,11 @@ public class BudgetServiceImpl implements BudgetService {
     @Override
     public List<Budget> findByResourceId(Long resourceId) {
         return dao.findByResourceId(resourceId);
+    }
+
+    @Override
+    protected CrudDao<Budget, Long> getDao() {
+        return dao;
     }
 
 }

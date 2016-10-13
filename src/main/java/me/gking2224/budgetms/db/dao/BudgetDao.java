@@ -3,18 +3,9 @@ package me.gking2224.budgetms.db.dao;
 import java.util.List;
 
 import me.gking2224.budgetms.model.Budget;
+import me.gking2224.common.db.dao.CrudDao;
 
-public interface BudgetDao {
-
-    Budget create(Budget budget);
-
-    List<Budget> findAll();
-
-    Budget update(Budget budget);
-
-    void delete(Long id);
-
-    Budget findById(Long id);
+public interface BudgetDao extends CrudDao<Budget, Long>{
 
     List<Budget> findByProjectId(Long projectId);
 

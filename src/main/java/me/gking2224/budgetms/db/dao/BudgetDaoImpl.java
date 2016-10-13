@@ -2,8 +2,8 @@ package me.gking2224.budgetms.db.dao;
 
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +15,11 @@ import me.gking2224.budgetms.model.Role;
 import me.gking2224.common.db.AbstractDaoImpl;
 
 @Component
-@Transactional
-public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao {
+@Transactional(readOnly=true)
+public class BudgetDaoImpl extends AbstractDaoImpl<Budget, Long> implements BudgetDao {
     
     @Autowired
-    protected BudgetRepository budgetRepository;
+    protected BudgetRepository repository;
     
     @Autowired
     protected RoleRepository roleRepository;
@@ -31,23 +31,11 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
     }
 
     @Override
-    public Budget create(Budget budget) {
-        Budget saved = update(budget);
-        return saved;
-    }
-
-    @Override
-    public List<Budget> findAll() {
-        List<Budget> budgets = budgetRepository.findAll();
-        return budgets;
-    }
-
-    @Override
-    public Budget update(final Budget b) {
+    public Budget save(final Budget b) {
 
         Budget toSave = b;
         if (b.getId() != null) {
-            toSave = budgetRepository.findOne(b.getId());
+            toSave = repository.findOne(b.getId());
             toSave.updateFrom(b);
         }
         else {
@@ -61,46 +49,22 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget> implements BudgetDao 
             });
         }
         
-        Budget saved = budgetRepository.save(toSave);
+        Budget saved = repository.save(toSave);
         return saved;
-    }
-
-    protected Role updateRole(Budget existingBudget, Role r) {
-
-        Role role = r;
-        
-        role.getAllocations().forEach(ra -> {
-            ra.setRole(r);
-            if (ra.getId() == null) {
-                role.addAllocation(ra);
-            }
-        });
-
-        return role;
-    }
-
-    @Override
-    public void delete(Long id) {
-        
-        budgetRepository.delete(id);
-    }
-
-    @Override
-    public Budget findById(Long id) {
-        
-        Budget budget = budgetRepository.findOne(id);
-        Hibernate.initialize(budget.getRoles());
-        
-        return budget;
     }
 
     @Override
     public List<Budget> findByProjectId(Long projectId) {
-        return budgetRepository.findByProjectId(projectId);
+        return repository.findByProjectId(projectId);
     }
 
     @Override
     public List<Budget> findByResourceId(Long resourceId) {
-        return budgetRepository.findByRoles_Allocations_ResourceId(resourceId);
+        return repository.findByRoles_Allocations_ResourceId(resourceId);
+    }
+
+    @Override
+    protected JpaRepository<Budget, Long> getRepository() {
+        return repository;
     }
 }
