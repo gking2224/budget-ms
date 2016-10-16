@@ -2,6 +2,7 @@ package me.gking2224.budgetms.db.dao;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
@@ -55,12 +56,27 @@ public class BudgetDaoImpl extends AbstractDaoImpl<Budget, Long> implements Budg
 
     @Override
     public List<Budget> findByProjectId(Long projectId) {
-        return repository.findByProjectId(projectId);
+        List<Budget> bb = repository.findByProjectId(projectId);
+        bb.forEach(b -> Hibernate.initialize(b.getRoles()));
+        return bb;
     }
 
     @Override
     public List<Budget> findByResourceId(Long resourceId) {
-        return repository.findByRoles_Allocations_ResourceId(resourceId);
+        List<Budget> bb = repository.findByRoles_Allocations_ResourceId(resourceId);
+        return bb;
+    }
+    
+    @Override
+    public Budget findById(Long id) {
+        Budget b = super.findById(id);
+        Hibernate.initialize(b.getRoles());
+        b.getRoles().forEach(r-> {
+            Hibernate.initialize(r.getFtes());
+            Hibernate.initialize(r.getAllocations());
+        });
+            
+        return b;
     }
 
     @Override

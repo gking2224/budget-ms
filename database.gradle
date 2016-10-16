@@ -32,14 +32,6 @@ apply plugin: 'me.gking2224.databasebuild'
 repositories {
   mavenCentral()
 }
-
-//task createDatabaseServer(type:CreateInstanceTask) {
-//    imageId = {databaseAmi}
-//    instanceType = "t2.micro"
-//    securityGroup = "restricted"
-//    postInitWaitTime = 60
-//}
-//
-//createDatabaseServer << {
-//    project.envProps.database.host = publicDnsName
-//}
+dbconfig {
+    createDatabaseScript dbDir, "createDatabaseAndUser.sql"
+}

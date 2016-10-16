@@ -1,4 +1,5 @@
 if (!project.hasProperty("env")) project.ext.env="embedded"
+
 environments {
     env("all") {
         database {
@@ -21,104 +22,74 @@ environments {
             connectionPoolSize = 2
         }
         webapp {
-            contextPath="/budgets"
-            httpPort=7000
-            ng {
-                buildDir = "dist"
-                port = 3000
-                deleteIndexHtml=false
-            }
+            contextPath="${project.contextPath}"
+            host="localhost"
+            httpPort=project.basePort
         }
+        security {
+            host= "${project.securityServiceHost}"
+            port= "${project.securityServicePort}"
+            context= "${project.securityServiceContext}"
+            realmName= "${project.realmName}"
+            allowedCorsOrigins="${project.allowedCorsOrigins}"
+        }
+        jdwpPort = Integer.parseInt(project.basePort)+1
     }
     env("local") {
         database {
-            name = "${project.localDatabaseName}"
+            name = "${project.databaseBaseName}_local"
             host = "${project.localDatabaseHost}"
             password = "${project.localDatabasePassword}"
             username = "${project.localDatabaseUsername}"
-            connectionPoolSize = 2
         }
         webapp {
-            contextPath="/budgets-local"
-            host="localhost"
-            ng {
-                buildDir = "dist-local"
-            }
-            httpPort=7000
+            httpPort=project.basePort
         }
     }
     env("embedded") {
         database {
-            port = 7002
-            name = "${project.localDatabaseName}"
+            port=Integer.parseInt(project.basePort)+2
+            name = "${project.databaseBaseName}_ebd"
             host = "${project.localDatabaseHost}"
             password = "${project.localDatabasePassword}"
             username = "${project.localDatabaseUsername}"
-            hibernate {
-                showSql = "false"
-                formatSql = "false"
-                hbm2ddlAuto = "validate"
-            }
-            connectionPoolSize = 2
         }
         webapp {
-            contextPath="/budgets-local"
-            host="localhost"
-            httpPort=7000
+            httpPort=project.basePort
         }
     }
-    env( "dev") {
+    env("dev") {
         database {
-            name = "${project.devDatabaseName}"
+            name = "${project.databaseBaseName}_dev"
             host = "${project.devDatabaseHost}"
             password = "${project.devDatabasePassword}"
             username = "${project.devDatabaseUsername}"
         }
         webapp {
-            contextPath="/budgets-dev"
-            ng {
-                buildDir = "dist-dev"
-            }
-            httpPort=7020
+            httpPort=Integer.parseInt(project.basePort)+20
         }
     }
     env("test") {
         database {
-            name = "${project.testDatabaseName}"
+            name = "${project.databaseBaseName}_tst"
             host = "${project.testDatabaseHost}"
             password = "${project.testDatabasePassword}"
             username = "${project.testDatabaseUsername}"
         }
         webapp {
-            contextPath="/budgets-test"
-            host="localhost"
-            ng {
-                buildDir = "dist-test"
-            }
-            httpPort=7040
+            httpPort=Integer.parseInt(project.basePort)+40
         }
     }
     env("prod") {
         database {
-            name = "${project.prodDatabaseName}"
+            name = "${project.databaseBaseName}_prd"
             host = "${project.prodDatabaseHost}"
             password = "${project.prodDatabasePassword}"
             username = "${project.prodDatabaseUsername}"
-            hibernate {
-                showSql = "false"
-                formatSql = "false"
-            }
             connectionPoolSize = 10
         }
         webapp {
-            contextPath="/budgets-prod"
-            host="${project.prodWebserverHost}"
-            ng {
-                buildDir = "dist-prod"
-                port = 3000
-                deleteIndexHtml=true
-            }
-            httpPort=7060
+            httpPort=Integer.parseInt(project.basePort)+60
         }
     }
 }

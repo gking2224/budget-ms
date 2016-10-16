@@ -50,7 +50,7 @@ public class BudgetDaoTest {
     }
     
     @Test
-    public void testUpdate() {
+    public void testSave() {
         String newName = "Updated name";
         
         Budget b = budgetDao.findById(1L);
@@ -60,7 +60,7 @@ public class BudgetDaoTest {
         
         b.setName(newName);
 
-        budgetDao.update(b);
+        budgetDao.save(b);
         Budget updated = budgetDao.findById(1L);
         
         assertNotNull(updated);
@@ -68,7 +68,7 @@ public class BudgetDaoTest {
     }
     
     @Test
-    public void testUpdateAddNewRole() {
+    public void testSaveAddNewRole() {
         long newLocation = 11L;
         String newRoleName = "newRole";
         
@@ -85,7 +85,7 @@ public class BudgetDaoTest {
         int numRoles = roles.size();
         roles.add(newRole);
 
-        budgetDao.update(b);
+        budgetDao.save(b);
         Budget updated = budgetDao.findById(1L);
         
         assertNotNull(updated);
@@ -94,7 +94,7 @@ public class BudgetDaoTest {
     }
     
     @Test
-    public void testUpdateModifyExistingRole() {
+    public void testSaveModifyExistingRole() {
         String newRoleName = "newRole";
         
         Budget b = budgetDao.findById(1L);
@@ -105,7 +105,7 @@ public class BudgetDaoTest {
                 .map(i->new BigDecimal((double)i))
                 .collect(Collectors.toList()));
 
-        budgetDao.update(b);
+        budgetDao.save(b);
         Budget updated = budgetDao.findById(1L);
         
         assertNotNull(updated);
@@ -115,7 +115,7 @@ public class BudgetDaoTest {
     }
     
     @Test
-    public void testUpdateAddRoleAllocation() {
+    public void testSaveAddRoleAllocation() {
         Long resourceId = 3L;
         
         Budget b = budgetDao.findById(1L);
@@ -140,7 +140,7 @@ public class BudgetDaoTest {
                 .map(i -> new BigDecimal(i))
                 .collect(Collectors.toList()));
         role.addAllocation(ra);
-        budgetDao.update(b);
+        budgetDao.save(b);
         
         Budget updated = budgetDao.findById(1L);
         

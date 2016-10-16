@@ -2,47 +2,53 @@ package me.gking2224.budgetms;
 
 
 import javax.security.auth.message.config.AuthConfigFactory;
+import javax.servlet.ServletContext;
 
 import org.apache.catalina.authenticator.jaspic.AuthConfigFactoryImpl;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
+import org.springframework.boot.web.support.ServletContextApplicationContextInitializer;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.support.StandardServletEnvironment;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import me.gking2224.budgetms.db.DatabaseConfiguration;
 import me.gking2224.budgetms.db.EmbeddedDatabaseConfiguration;
+import me.gking2224.budgetms.security.SecurityConfiguration;
 import me.gking2224.budgetms.web.WebAppConfiguration;
 import me.gking2224.common.CommonConfiguration;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 @Configuration
 @ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model"})
-@EnableAutoConfiguration
-@EnableWebMvc
-@Import({WebAppConfiguration.class, DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class, CommonConfiguration.class})
+@Import({WebAppConfiguration.class, DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class, CommonConfiguration.class, SecurityConfiguration.class})
 public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
+
+    private ServletContext servletContext;
     
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         ConfigurableEnvironment environment = new StandardServletEnvironment();
 //        ApplicationListener<?> listeners = new ApplicationListenerImplementation(this);
-//        ApplicationContextInitializer<?> initializers = new ServletContextApplicationContextInitializer(ServletContext ctx);
+        ApplicationContextInitializer<?> initializers = initializer();
         return application
                 .contextClass(AnnotationConfigEmbeddedWebApplicationContext.class)
                 .environment(environment)
 //                .listeners(listeners)
-//                .initializers(initializers)
+                .initializers(initializers)
                 .registerShutdownHook(true)
                 .web(true)
                 .logStartupInfo(true)
                 .sources(BudgetMicroServiceApplication.class);
+    }
+    private ServletContextApplicationContextInitializer initializer() {
+        ServletContextApplicationContextInitializer initializer = new ServletContextApplicationContextInitializer(servletContext);
+        return initializer;
     }
     public static void main(String[] args) {
         SysOutOverSLF4J.sendSystemOutAndErrToSLF4J();

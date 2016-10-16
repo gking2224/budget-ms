@@ -84,7 +84,7 @@ public class BudgetController {
         if (typeId == null) budget.setId(id);
         else if (typeId.longValue() != id.longValue())
             throw new IllegalArgumentException("Illegal attempt to change immutable field (id)");
-        Budget mt = budgetService.update(budget);
+        Budget mt = budgetService.save(budget);
         mt = enrichType(mt);
 
         HttpHeaders headers = new HttpHeaders();
@@ -119,7 +119,7 @@ public class BudgetController {
     }
 
     // get budget by project id
-    @JsonView(View.Detail.class)
+    @JsonView(View.Summary.class)
     @RequestMapping(value="/project/{projectId}", method=RequestMethod.GET)
     public ResponseEntity<List<Budget>> getBudgetsByProjectId(
             @PathVariable("projectId") final Long projectId) {
