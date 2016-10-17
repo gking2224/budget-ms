@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import me.gking2224.securityms.client.CommonSecurityConfiguration;
 import me.gking2224.securityms.client.HttpSecurityConfigurer;
 
-@Import(CommonSecurityConfiguration.class)
+@Import({CommonSecurityConfiguration.class})
 public class SecurityConfiguration {
 
     @Bean

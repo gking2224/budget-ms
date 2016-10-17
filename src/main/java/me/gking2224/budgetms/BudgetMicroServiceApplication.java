@@ -11,6 +11,7 @@ import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebAppl
 import org.springframework.boot.web.support.ServletContextApplicationContextInitializer;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -19,6 +20,7 @@ import org.springframework.web.context.support.StandardServletEnvironment;
 
 import me.gking2224.budgetms.db.DatabaseConfiguration;
 import me.gking2224.budgetms.db.EmbeddedDatabaseConfiguration;
+import me.gking2224.budgetms.jms.MessagingConfiguration;
 import me.gking2224.budgetms.security.SecurityConfiguration;
 import me.gking2224.budgetms.web.WebAppConfiguration;
 import me.gking2224.common.CommonConfiguration;
@@ -26,7 +28,14 @@ import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 @Configuration
 @ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model"})
-@Import({WebAppConfiguration.class, DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class, CommonConfiguration.class, SecurityConfiguration.class})
+@Import({
+    WebAppConfiguration.class,
+    DatabaseConfiguration.class,
+    EmbeddedDatabaseConfiguration.class,
+    CommonConfiguration.class,
+    SecurityConfiguration.class,
+    MessagingConfiguration.class
+})
 public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
 
     private ServletContext servletContext;
@@ -44,6 +53,7 @@ public class BudgetMicroServiceApplication extends SpringBootServletInitializer{
                 .registerShutdownHook(true)
                 .web(true)
                 .logStartupInfo(true)
+                .beanNameGenerator(new AnnotationBeanNameGenerator())
                 .sources(BudgetMicroServiceApplication.class);
     }
     private ServletContextApplicationContextInitializer initializer() {
