@@ -13,12 +13,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.gking2224.budgetms.BudgetServiceTestInitializer;
 import me.gking2224.budgetms.BudgetsTestConfiguration;
 import me.gking2224.budgetms.model.Budget;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"embedded"})
-@ContextConfiguration(classes=BudgetsTestConfiguration.class)
+@ContextConfiguration(name="budgetms", classes=BudgetsTestConfiguration.class, initializers={BudgetServiceTestInitializer.class})
 @Transactional
 @Rollback
 public class BudgetRepositoryIT {

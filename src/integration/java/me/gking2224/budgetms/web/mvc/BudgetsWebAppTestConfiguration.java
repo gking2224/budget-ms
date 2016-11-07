@@ -1,16 +1,12 @@
 package me.gking2224.budgetms.web.mvc;
 
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-import me.gking2224.budgetms.db.DatabaseConfiguration;
-import me.gking2224.budgetms.db.EmbeddedDatabaseConfiguration;
-import me.gking2224.budgetms.web.WebAppConfiguration;
-import me.gking2224.common.test.CommonTestConfiguration;
+import me.gking2224.budgetms.BudgetsTestConfiguration;
 import me.gking2224.common.test.WebAppTestConfigurer;
 
-@ComponentScan({"me.gking2224.budgetms.model", "me.gking2224.budgetms.service"})
-@Import({WebAppConfiguration.class, DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class, CommonTestConfiguration.class})
+@Import({BudgetsTestConfiguration.class})
+@org.springframework.test.context.web.WebAppConfiguration
 public class BudgetsWebAppTestConfiguration extends WebAppTestConfigurer {
 }

@@ -17,20 +17,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import me.gking2224.budgetms.BudgetServiceTestInitializer;
 import me.gking2224.budgetms.BudgetsTestConfiguration;
 import me.gking2224.budgetms.model.Budget;
 import me.gking2224.budgetms.model.Role;
 import me.gking2224.budgetms.model.RoleAllocation;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"embedded"})
-@ContextConfiguration(classes=BudgetsTestConfiguration.class)
+@ContextConfiguration(name="budgetms", classes=BudgetsTestConfiguration.class, initializers={BudgetServiceTestInitializer.class})
 @Transactional
 @Rollback
 @Sql({"../../SingleBudget.sql"})

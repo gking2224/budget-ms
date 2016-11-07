@@ -1,5 +1,5 @@
 
-insert into budget (budget_id, project_id, name) values (1, 1, 'Test Budget');
+insert into budget (budget_id, project_id, name, year) values (1, 1, 'Test Budget', 2016);
 
 insert into role (role_id, budget_id, name, location_id, rate) values (1, 1, 'Test role', 1, 500.00);
 
