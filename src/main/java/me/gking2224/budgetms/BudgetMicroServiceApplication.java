@@ -19,9 +19,9 @@ import me.gking2224.common.CommonConfiguration;
 @ComponentScan(basePackages={"me.gking2224.budgetms.service", "me.gking2224.budgetms.model"})
 @Import({
     CommonConfiguration.class,
-    WebAppConfiguration.class,
     DatabaseConfiguration.class, EmbeddedDatabaseConfiguration.class,
     SecurityConfiguration.class,
+    WebAppConfiguration.class,
     MessagingConfiguration.class
 })
 public class BudgetMicroServiceApplication extends AbstractMicroServiceApplication {
