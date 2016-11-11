@@ -6,3 +6,4 @@
 /.classpath
 /.project
 /secret.properties
+/logback-local.xml
