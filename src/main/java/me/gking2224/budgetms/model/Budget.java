@@ -1,5 +1,6 @@
 package me.gking2224.budgetms.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,11 +21,12 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import me.gking2224.common.model.NullAbstractEntity;
 import me.gking2224.common.web.View;
 
 @Entity
 @Table
-public class Budget implements java.io.Serializable {
+public class Budget extends NullAbstractEntity<Long> implements Serializable {
 
     /**
      * 
