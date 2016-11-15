@@ -37,6 +37,7 @@ buildtools {
     clientlibEnabled()
 }
 applyBuildTools()
+
 apply from: 'database.gradle'
 apply from: 'environments.gradle'
 
